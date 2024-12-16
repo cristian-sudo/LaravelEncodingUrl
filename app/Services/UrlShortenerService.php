@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Interfaces\UrlShortenerInterface;
+use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class UrlShortenerService implements UrlShortenerInterface
 {
@@ -59,20 +61,20 @@ class UrlShortenerService implements UrlShortenerInterface
     }
 
     /**
-     * Generate a random alphanumeric code for URL shortening.
+     * Generate a unique alphanumeric code for URL shortening.
      *
-     * This method creates a random string of a specified length using
-     * a mix of numbers and both lowercase and uppercase letters. The
-     * generated code is used as the unique identifier for the shortened URL.
+     * This method generates a Universally Unique Identifier (UUID) and then
+     * creates an MD5 hash of the UUID. The hash is truncated to a specified
+     * length to produce a shortened alphanumeric code. This approach
+     * minimizes the risk of collisions by leveraging the uniqueness of UUIDs.
      *
      * @return string The generated alphanumeric code.
+     *
+     * @throws Exception If it was not possible to gather sufficient entropy.
      */
     protected function generateCode(): string
     {
-        return substr(
-            str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-            0,
-            self::CODE_LENGTH
-        );
+        $uuid = Str::uuid()->toString();
+        return substr(md5($uuid), 0, self::CODE_LENGTH);
     }
 }
