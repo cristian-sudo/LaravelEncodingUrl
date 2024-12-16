@@ -1,66 +1,162 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# URL Shortening Service
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project implements a URL shortening service using PHP and Laravel. It provides endpoints to encode long URLs into short URLs and decode short URLs back to their original form.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Encode long URLs into short, unique URLs.
+- Decode short URLs back to their original URLs.
+- In-memory storage of URL mappings using Laravel's caching system.
+- Structured JSON responses for all API endpoints.
+- Includes a Makefile for running tests and checking code standards.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3 or higher
+- Composer
+- Laravel 11.x
+- Laravel Valet for local development
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone the Repository**:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+   ```bash
+   git clone git@github.com:cristian-sudo/LaravelEncodingUrl.git
+   cd LaravelEncodingUrl
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Install Dependencies**:
 
-## Laravel Sponsors
+   Use Composer to install the required PHP dependencies:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   composer install
+   ```
 
-### Premium Partners
+3. **Environment Setup**:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+   Copy the `.env.example` file to `.env` and configure your environment variables as needed:
 
-## Contributing
+   ```bash
+   cp .env.example .env
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   Generate an application key:
 
-## Code of Conduct
+   ```bash
+   php artisan key:generate
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. **Serve with Laravel Valet**:
 
-## Security Vulnerabilities
+   If you're using Laravel Valet for local development, navigate to your project directory and link it with Valet:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   valet link laravel-url-shortener
+   valet secure laravel-url-shortener
+   ```
+
+   Your application will be accessible at `https://laravel-url-shortener.test`.
+
+## Usage
+
+### Encode URL
+
+- **Endpoint**: `/api/encode`
+- **Method**: POST
+- **Request Body**: JSON with a `url` field containing the long URL to be shortened.
+
+**Example Request**:
+
+```json
+{
+  "url": "https://www.thisisalongdomain.com/with/some/parameters?and=here_too"
+}
+```
+
+**Example Response**:
+
+```json
+{
+  "status": "success",
+  "message": "URL encoded successfully",
+  "data": {
+    "short_url": "https://laravel-url-shortener.test/GeAi9K"
+  },
+  "errors": [],
+  "statusCode": 200
+}
+```
+
+### Decode URL
+
+- **Endpoint**: `/api/decode`
+- **Method**: POST
+- **Request Body**: JSON with a `short_url` field containing the short URL to be decoded.
+
+**Example Request**:
+
+```json
+{
+  "short_url": "https://laravel-url-shortener.test/GeAi9K"
+}
+```
+
+**Example Response**:
+
+```json
+{
+  "status": "success",
+  "message": "URL decoded successfully",
+  "data": {
+    "original_url": "https://www.thisisalongdomain.com/with/some/parameters?and=here_too"
+  },
+  "errors": [],
+  "statusCode": 200
+}
+```
+
+## Testing and Code Quality
+
+The project includes a Makefile to facilitate testing and code quality checks using PHP_CodeSniffer.
+
+### Run Tests
+
+To run the tests, use the following command:
+
+```bash
+make test
+```
+
+### Code Quality Checks
+
+- **Check Code Standards**:
+
+  Run PHP_CodeSniffer to check code standards:
+
+  ```bash
+  make phpcs
+  ```
+
+- **Fix Code Standards**:
+
+  Run PHP_CodeBeautifier and Fixer to automatically fix code standards issues:
+
+  ```bash
+  make phpcbf
+  ```
+
+- **Fix and Check**:
+
+  Run both the fixer and the checker:
+
+  ```bash
+  make fix-and-check
+  ```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-source and available under the [MIT License](LICENSE).
+
+Here is a link to the project documentation: [LaravelEncodingUrl](https://docs.google.com/document/d/1fEJT_4ULMYZtKE7lCndNkZ7lMfPdQfHYXHzbXN-H_wE/edit?usp=sharing)
